@@ -1,5 +1,11 @@
 <template>
-  <button @click="plotData" class="button corner is-success">Fetch and Plot</button>
+  <div class="corner">
+    <h2 class="title">Bali Temples Map</h2>
+    <p>The data is from <a href="https://github.com/KadekSatriadi/OSM-Bali-temples" target="_blank">Bali Temples </a>.</p>
+    <p><small><i>Developed by Kadek Satriadi, under the <a href="https://badhi.id" target="_blank">BADHI project</a>.</i></small></p>
+    <hr/>  
+    <button @click="plotData" class="button is-success">Fetch and Plot</button>
+</div>
   <div id="map"></div>
 </template>
 
