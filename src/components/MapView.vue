@@ -1,13 +1,13 @@
 <template>
   <div class="corner info p-5">
-    <h2 class="title is-4">Map of Worship Places in Bali</h2>
+    <h2 class="title">Worship Places in Bali</h2>
     <p>
       The data is from
       <a
         href="https://github.com/KadekSatriadi/OSM-Bali-temples"
         target="_blank"
         >Bali Temples </a
-      >.
+      > (OpenStreetMap).
     </p>
     <p>
       <small
