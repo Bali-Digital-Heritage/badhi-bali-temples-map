@@ -1,16 +1,30 @@
 <template>
   <div class="corner">
     <h2 class="title">Bali Temples Map</h2>
-    <p>The data is from <a href="https://github.com/KadekSatriadi/OSM-Bali-temples" target="_blank">Bali Temples </a>.</p>
-    <p><small><i>Developed by Kadek Satriadi, under the <a href="https://badhi.id" target="_blank">BADHI project</a>.</i></small></p>
-    <hr/>  
+    <p>
+      The data is from
+      <a
+        href="https://github.com/KadekSatriadi/OSM-Bali-temples"
+        target="_blank"
+        >Bali Temples </a
+      >.
+    </p>
+    <p>
+      <small
+        ><i
+          >Developed by Kadek Satriadi, under the
+          <a href="https://badhi.id" target="_blank">BADHI project</a>.</i
+        ></small
+      >
+    </p>
+    <hr />
     <button @click="plotData" class="button is-success">Fetch and Plot</button>
-</div>
+  </div>
   <div id="map"></div>
 </template>
 
 <style>
-.popup{
+.popup {
   max-height: 200px;
   overflow-y: scroll;
 }
@@ -18,11 +32,11 @@
   width: 100%;
   height: 100vh !important;
 }
-.corner{
+.corner {
   position: absolute !important;
-    top: 5%;
-    z-index: 1000;
-    right: 1%;
+  top: 5%;
+  z-index: 1000;
+  right: 1%;
 }
 </style>
 
@@ -36,11 +50,11 @@ import "leaflet/dist/leaflet.css";
 export default {
   name: "MapView",
   setup() {
-
     const localStorageKey = "geospatialData";
 
     const map = ref(null);
-    const csvUrl = "https://raw.githubusercontent.com/KadekSatriadi/OSM-Bali-temples/main/Bali_place_of_worship_all.csv";
+    const csvUrl =
+      "https://raw.githubusercontent.com/KadekSatriadi/OSM-Bali-temples/main/Bali_place_of_worship_all.csv";
 
     onMounted(async () => {
       // Initialize the map
@@ -53,15 +67,14 @@ export default {
 
       let csvDataString = localStorage.getItem(localStorageKey);
       //not available, fetch
-      if (csvDataString){
+      if (csvDataString) {
         plotData();
       }
     });
 
-
     const fetchData = async () => {
       // Fetch the CSV data
-      let csvData;      
+      let csvData;
       console.log("fecthing data ", csvUrl);
       try {
         const response = await axios.get(csvUrl);
@@ -74,7 +87,7 @@ export default {
 
       return csvData;
     };
-    const createPopupContent = (row:any) => {
+    const createPopupContent = (row: any) => {
       let table = "<div class='popup'><table>";
       for (const key in row) {
         if (row.hasOwnProperty(key)) {
@@ -85,21 +98,7 @@ export default {
       return table;
     };
 
-    const plotData = () => {
-      //check local
-      let csvDataString = localStorage.getItem(localStorageKey);
-      //not available, fetch
-      if (!csvDataString) {
-        console.log("data not found in local storage, fetch");
-        (async () => {
-          // Your async code here
-          fetchData().then((data) => {
-            csvDataString = data;
-          });
-        })();
-      } else {
-        console.log("load data from local storage, fetch");
-      }
+    const plotString = (csvDataString: any) => {
       // Parse the CSV data
       Papa.parse(csvDataString, {
         header: true,
@@ -123,6 +122,24 @@ export default {
           });
         },
       });
+    };
+
+    const plotData = () => {
+      //check local
+      let csvDataString = localStorage.getItem(localStorageKey);
+      //not available, fetch
+      if (!csvDataString) {
+        console.log("data not found in local storage, fetch");
+        (async () => {
+          // Your async code here
+          fetchData().then((data) => {
+            plotString(data);
+          });
+        })();
+      } else {
+        plotString(csvDataString);
+        console.log("load data from local storage, fetch");
+      }
     };
 
     return { fetchData, plotData };
