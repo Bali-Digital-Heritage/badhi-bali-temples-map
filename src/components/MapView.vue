@@ -40,6 +40,7 @@ export default {
     const localStorageKey = "geospatialData";
 
     const map = ref(null);
+    const csvUrl = "https://raw.githubusercontent.com/KadekSatriadi/OSM-Bali-temples/main/Bali_place_of_worship_all.csv";
 
     onMounted(async () => {
       // Initialize the map
@@ -60,9 +61,7 @@ export default {
 
     const fetchData = async () => {
       // Fetch the CSV data
-      let csvData;
-      const csvUrl =
-        "https://github.com/KadekSatriadi/OSM-Bali-temples/blob/main/Bali_place_of_worship_all.csv";
+      let csvData;      
       console.log("fecthing data ", csvUrl);
       try {
         const response = await axios.get(csvUrl);
