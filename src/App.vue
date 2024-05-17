@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import Mapview from './components/MapView.vue'
 defineExpose({Mapview});
 </script>
