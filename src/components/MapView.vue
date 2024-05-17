@@ -27,12 +27,12 @@
 
     </div>
     <hr />
-    <button @click="plotData" class="button is-success mb-4">Fetch and Plot</button>
+    <button @click="plotData" class="button  mb-4">Fetch and Plot</button>
     <div class="buttons">
-      <button class="button" @click="changeTileLayer('Standard')">Standard</button>
-      <button class="button" @click="changeTileLayer('Hot')">Hot</button>
-      <button class="button" @click="changeTileLayer('OpenTopoMap')">OpenTopoMap</button>
-      <button class="button" @click="changeTileLayer('WorldImagery')">WorldImagery</button>
+      <button class="button is-small" @click="changeTileLayer('Standard')">Standard</button>
+      <button class="button is-small" @click="changeTileLayer('Hot')">Hot</button>
+      <button class="button is-small" @click="changeTileLayer('OpenTopoMap')">OpenTopoMap</button>
+      <button class="button is-small" @click="changeTileLayer('WorldImagery')">WorldImagery</button>
       <!-- Add more buttons for other styles if needed -->
     </div>
   </div>
