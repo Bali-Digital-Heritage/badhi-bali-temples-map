@@ -1,34 +1,23 @@
 <template>
+  <!-- information panel -->
   <div class="corner info p-5">
-    <h2 class="title">Worship Places in Bali</h2>
+    <h2 class="title">Bali Temples</h2>
     <p>
-      The data is from
-      <a
-        href="https://github.com/KadekSatriadi/OSM-Bali-temples"
-        target="_blank"
-        >Bali Temples </a
-      > (OpenStreetMap).
+     Worship places and temples in Bali. 
     </p>
     <p>
       <small
         ><i
-          >Developed by Kadek Satriadi, under the
-          <a href="https://badhi.id" target="_blank">BADHI project</a>.</i
+          >Developed by Kadek Ananta Satriadi, PhD, under the
+          <a href="https://badhi.id" target="_blank">BADHI project</a>.<br/>
+          Version May 2024.</i
         ></small
       >
     </p>
     <hr />
 
-    <div class="legend mt-3">
-      <div class="legend-item">
-        <div class="legend-icon named"></div>
-        <div class="legend-label">Named point ({{ totalnamed }})</div>
-      </div>
-      <div class="legend-item">
-        <div class="legend-icon unnamed"></div>
-        <div class="legend-label">Unnamed point ( {{ totalunnamed }})</div>
-      </div>
-    </div>
+    <LayerList :layers="layers" @togglelayer="togglelayer" />
+    <div class="legend mt-3"></div>
     <!-- buggy
       <div class="buttons">
       <button class="button is-small" @click="changeTileLayer('Standard')">Standard</button>
@@ -37,6 +26,8 @@
       <button class="button is-small" @click="changeTileLayer('WorldImagery')">WorldImagery</button>
     </div>
   --></div>
+
+  <!-- end of information panel -->
   <div id="map"></div>
 </template>
 
@@ -53,12 +44,7 @@
   margin-right: 5px;
   padding: 2px;
 }
-.unnamed {
-  background-color: #7570b3;
-}
-.named {
-  background-color: #d95f02;
-}
+
 .legend-icon {
   width: 24px;
   height: 24px;
@@ -87,23 +73,116 @@
 </style>
 
 <script>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, toRaw } from "vue";
 import L from "leaflet";
 import axios from "axios";
 import Papa from "papaparse";
 import "leaflet/dist/leaflet.css";
+import LayerList from "./LayerList.vue";
 
 export default {
   name: "MapView",
+  components: {
+    LayerList,
+  },
   setup() {
-    const localStorageKey = "geospatialData";
-
-    let totalnamed = ref(0);
-    let totalunnamed = ref(0);
-
     const map = ref(null);
-    const csvUrl =
-      "https://raw.githubusercontent.com/KadekSatriadi/OSM-Bali-temples/main/Bali_place_of_worship_all.csv";
+
+    const LAYERTYPE = {
+      polygon: "polygon",
+      point: "point",
+    };
+
+    const COLORS = {
+      color1: "#7fc97f",
+      color2: "#beaed4",
+      color3: "#fdc086",
+      color4: "#ffff99",
+      color5: "#386cb0",
+      color6: "#f0027f",
+      color7: "#bf5b1",
+    };
+
+    const namedColor = COLORS.color2;
+    const unnamedColor = COLORS.color1;
+    const typeknownColor = COLORS.color5;
+    const typeunknownColor = COLORS.color3;
+
+    const templePolygonColorMap = (row, layer) => {
+      let color;
+      // Check if the value is NA
+      if (row.name === "NA") {
+        // Color for NA values
+        color = namedColor;
+      } else {
+        // Color for non-NA values
+        color = unnamedColor;
+      }
+
+      return color;
+    };
+
+    const templePointColorMap = (row, layer) => {
+      if (row.Type == "") {
+        return typeunknownColor;
+      } else {
+        return typeknownColor;
+      }
+    };
+
+    const OSMPolygonLayer = {
+      type: LAYERTYPE.polygon,
+      csvurl:
+        "https://raw.githubusercontent.com/KadekSatriadi/OSM-Bali-temples/main/Bali_place_of_worship_all.csv",
+      name: "OSM Worship Places",
+      description: "Worship places in Bali from Openstreetmap data.",
+      geometry: "geometry",
+      id: "osmwp",
+      isactive: true,
+      aes: {
+        color: templePolygonColorMap,
+      },
+      style: {
+        fillOpacity: 0.5, // Circle fill opacity
+      },
+      legend: `<div class="legend-item">
+        <div class="legend-icon" style="background-color: ${namedColor}"></div>
+        <div class="legend-label">Named place</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-icon" style="background-color: ${unnamedColor}"></div>
+        <div class="legend-label">Unnamed place</div>
+      </div>`,
+    };
+
+    const TemplesPointLayer = {
+      type: LAYERTYPE.point,
+      csvurl:
+        "https://gist.githubusercontent.com/KadekSatriadi/446b309a444bb7432ca1d3d9f9dac8e0/raw/58196037b0b12b51c1258cf4e473013231cd3f41/Bali_temples_2021.csv",
+      name: "Temple Restore data",
+      description: "Bali temples data from the Temple Restore project.",
+      lat: "Latitude",
+      lon: "Longitude",
+      id: "ts2021",
+      isactive: true,
+      aes: {
+        color: templePointColorMap,
+      },
+      style: {
+        fillOpacity: 0.5, // Circle fill opacity
+        radius: 15, // Circle radius in pxl
+      },
+      legend: `<div class="legend-item">
+        <div class="legend-icon" style="background-color: ${typeknownColor}"></div>
+        <div class="legend-label">Type known</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-icon" style="background-color: ${typeunknownColor}"></div>
+        <div class="legend-label">Type unknown</div>
+      </div>`,
+    };
+
+    const layers = ref([OSMPolygonLayer, TemplesPointLayer]);
 
     let tileLayer;
 
@@ -119,17 +198,20 @@ export default {
         }
       ).addTo(map.value);
 
-      plotData();
+      layers.value.forEach((layer) => {
+        plotData(layer);
+      });
+      //plotData(layers[1]);
     });
 
-    const fetchData = async () => {
+    const fetchData = async (layer) => {
       // Fetch the CSV data
       let csvData;
-      console.log("fecthing data ", csvUrl);
+      console.log("fecthing data ", layer.csvurl);
       try {
-        const response = await axios.get(csvUrl);
+        const response = await axios.get(layer.csvurl);
         csvData = response.data;
-        localStorage.setItem(localStorageKey, csvData);
+        localStorage.setItem(layer.id, csvData);
         console.log("Success");
       } catch (error) {
         console.error("Error fetching the CSV data", error);
@@ -162,61 +244,97 @@ export default {
         });
     };
 
-    const plotString = (csvDataString) => {
+    const plotPolygonLayerItem = (row, layer) => {
+      console.log(row[layer.geometry]);
+      var latlngs = wktToLatLngs(row[layer.geometry]);
+      console.log(latlngs);
+      let style = layer.style;
+      if (layer.aes.color) {
+        style.color = layer.aes.color(row, layer);
+      }
+
+      if (latlngs) {
+        //L.marker([lat, lon]).addTo(map.value);
+        const l = L.polygon(latlngs, style)
+          .addTo(map.value)
+          .bindPopup(createPopupContent(row));
+
+        layer.leaflet.push(l);
+      }
+    };
+
+    const plotPointLayerItem = (row, layer) => {
+      let lat = parseFloat(row[layer.lat]);
+      let lon = parseFloat(row[layer.lon]);
+
+      let style = layer.style;
+      if (layer.aes.color) {
+        style.color = layer.aes.color(row, layer);
+      }
+      if (lat && lon) {
+        //L.marker([lat, lon]).addTo(map.value);
+        const l = L.circle([lat, lon], style)
+          .addTo(map.value)
+          .bindPopup(createPopupContent(row));
+        layer.leaflet.push(l);
+      }
+    };
+
+    const plotString = (csvDataString, layer) => {
       // Parse the CSV data
+      layer.leaflet = [];
+
       Papa.parse(csvDataString, {
         header: true,
         complete: (results) => {
-          
           results.data.forEach((row) => {
-            console.log(row.geometry);
-            var latlngs = wktToLatLngs(row.geometry);
-            console.log(latlngs);
-
-            let color;
-            // Check if the value is NA
-            if (row.name === "NA") {
-              // Color for NA values
-              color = "#7570b3";
-              totalunnamed.value += 1;
-
-            } else {
-              // Color for non-NA values
-              color = "#d95f02";
-              totalnamed.value += 1;
-
-            }
-            if (latlngs) {
-              //L.marker([lat, lon]).addTo(map.value);
-              L.polygon(latlngs, {
-                color: color, // Circle border color
-                fillColor: color, // Circle fill color
-                fillOpacity: 0.5, // Circle fill opacity
-                radius: 1, // Circle radius in pxl
-              })
-                .addTo(map.value)
-                .bindPopup(createPopupContent(row));
+            switch (layer.type) {
+              case LAYERTYPE.polygon:
+                //if data
+                if (row[layer.geometry]) {
+                  plotPolygonLayerItem(row, layer);
+                }
+                break;
+              case LAYERTYPE.point:
+                console.log(row);
+                if (row[layer.lat] && row[layer.lon]) {
+                  plotPointLayerItem(row, layer);
+                }
+                break;
             }
           });
         },
       });
     };
 
-    const plotData = () => {
+    const plotData = (layer) => {
       //check local
-      let csvDataString = localStorage.getItem(localStorageKey);
+      let csvDataString = localStorage.getItem(layer.id);
       //not available, fetch
       if (!csvDataString) {
         console.log("data not found in local storage, fetch");
         (async () => {
           // Your async code here
-          fetchData().then((data) => {
-            plotString(data);
+          fetchData(layer).then((data) => {
+            plotString(data, layer);
           });
         })();
       } else {
-        plotString(csvDataString);
+        plotString(csvDataString, layer);
         console.log("load data from local storage, fetch");
+      }
+    };
+
+    const togglelayer = (layer) => {
+      let l = toRaw(layer);
+      if (l.isactive) {
+        l.leaflet.forEach((element) => {
+          map.value.addLayer(element);
+        });
+      } else {
+        l.leaflet.forEach((element) => {
+          map.value.removeLayer(element);
+        });
       }
     };
 
@@ -265,7 +383,13 @@ export default {
       }
     };
 
-    return { fetchData, plotData, changeTileLayer, totalnamed, totalunnamed };
+    return {
+      fetchData,
+      plotData,
+      changeTileLayer,
+      layers,
+      togglelayer,
+    };
   },
 };
 </script>
