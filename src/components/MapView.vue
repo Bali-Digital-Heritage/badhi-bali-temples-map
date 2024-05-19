@@ -5,15 +5,7 @@
     <p>
      Worship places and temples in Bali. 
     </p>
-    <p>
-      <small
-        ><i
-          >Developed by Kadek Ananta Satriadi, PhD, under the
-          <a href="https://badhi.id" target="_blank">BADHI project</a>.<br/>
-          Version May 2024.</i
-        ></small
-      >
-    </p>
+    
     <hr />
 
     <LayerList :layers="layers" @togglelayer="togglelayer" />
@@ -25,8 +17,18 @@
       <button class="button is-small" @click="changeTileLayer('OpenTopoMap')">OpenTopoMap</button>
       <button class="button is-small" @click="changeTileLayer('WorldImagery')">WorldImagery</button>
     </div>
-  --></div>
-
+  -->
+  <p>
+      <small
+        ><i
+          >Developed by Kadek Ananta Satriadi, PhD, under the
+          <a href="https://badhi.id" target="_blank">BADHI project</a>.<br/>
+          Version May 2024.</i
+        ></small
+      >
+    </p>
+  
+  </div>
   <!-- end of information panel -->
   <div id="map"></div>
 </template>
@@ -206,12 +208,10 @@ export default {
     const fetchData = async (layer) => {
       // Fetch the CSV data
       let csvData;
-      console.log("fecthing data ", layer.csvurl);
       try {
         const response = await axios.get(layer.csvurl);
         csvData = response.data;
         localStorage.setItem(layer.id, csvData);
-        console.log("Success");
       } catch (error) {
         console.error("Error fetching the CSV data", error);
       }
@@ -244,9 +244,7 @@ export default {
     };
 
     const plotPolygonLayerItem = (row, layer) => {
-      console.log(row[layer.geometry]);
       var latlngs = wktToLatLngs(row[layer.geometry]);
-      console.log(latlngs);
       let style = layer.style;
       if (layer.aes.color) {
         style.color = layer.aes.color(row, layer);
@@ -295,7 +293,6 @@ export default {
                 }
                 break;
               case LAYERTYPE.point:
-                console.log(row);
                 if (row[layer.lat] && row[layer.lon]) {
                   plotPointLayerItem(row, layer);
                 }
