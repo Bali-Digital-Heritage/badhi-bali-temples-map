@@ -157,8 +157,7 @@ export default {
 
     const TemplesPointLayer = {
       type: LAYERTYPE.point,
-      csvurl:
-        "https://gist.githubusercontent.com/KadekSatriadi/446b309a444bb7432ca1d3d9f9dac8e0/raw/58196037b0b12b51c1258cf4e473013231cd3f41/Bali_temples_2021.csv",
+      csvurl: "https://gist.githubusercontent.com/KadekSatriadi/6ca371ab0896edfae921e33cdaba87df/raw/7653c8d3696c679d1eca7a1fbb660b28bb403300/Bali_Temples_2021.csv",
       name: "Temple Restore data",
       description: "Bali temples data from the Temple Restore project.",
       lat: "Latitude",
