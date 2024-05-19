@@ -5,15 +5,7 @@
     <p>
      Worship places and temples in Bali. 
     </p>
-    <p>
-      <small
-        ><i
-          >Developed by Kadek Ananta Satriadi, PhD, under the
-          <a href="https://badhi.id" target="_blank">BADHI project</a>.<br/>
-          Version May 2024.</i
-        ></small
-      >
-    </p>
+    
     <hr />
 
     <LayerList :layers="layers" @togglelayer="togglelayer" />
@@ -25,8 +17,18 @@
       <button class="button is-small" @click="changeTileLayer('OpenTopoMap')">OpenTopoMap</button>
       <button class="button is-small" @click="changeTileLayer('WorldImagery')">WorldImagery</button>
     </div>
-  --></div>
-
+  -->
+  <p>
+      <small
+        ><i
+          >Developed by Kadek Ananta Satriadi, PhD, under the
+          <a href="https://badhi.id" target="_blank">BADHI project</a>.<br/>
+          Version May 2024.</i
+        ></small
+      >
+    </p>
+  
+  </div>
   <!-- end of information panel -->
   <div id="map"></div>
 </template>
