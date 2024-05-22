@@ -159,7 +159,7 @@ export default {
       tokenurl: "https://badhi-data-api.netlify.app/api/token",
       csvurl: "https://badhi-data-api.netlify.app/api/data",
       name: "Temple Restore data",
-      description: "Bali temples data from the Temple Restore project.",
+      description: "Temples Data from the Temple Restore project run by Samatha Sharma, MSc, London School of Economics, B.E(Hons.) BITS Pilani. She can be reached at samatha.express@gmail.com",
       lat: "Latitude",
       lon: "Longitude",
       id: "ts2021",
