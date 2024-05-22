@@ -217,7 +217,6 @@ export default {
               },
               responseType: "json",
             });
-            console.log(response.data);
             csvData = {
               type: "json",
               data: response.data,
