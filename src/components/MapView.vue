@@ -1,6 +1,6 @@
 <template>
   <!-- information panel -->
-  <div class="corner info p-5">
+  <div class="corner panel info p-5">
     <h2 class="title">Bali Temples</h2>
     <p>Worship places and temples in Bali.</p>
 
@@ -31,6 +31,9 @@
 </template>
 
 <style>
+.panel{
+  max-width: 500px;
+}
 .popup {
   max-height: 200px;
   overflow-y: scroll;
