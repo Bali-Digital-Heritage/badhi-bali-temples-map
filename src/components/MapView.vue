@@ -2,10 +2,8 @@
   <!-- information panel -->
   <div class="corner info p-5">
     <h2 class="title">Bali Temples</h2>
-    <p>
-     Worship places and temples in Bali. 
-    </p>
-    
+    <p>Worship places and temples in Bali.</p>
+
     <hr />
 
     <LayerList :layers="layers" @togglelayer="togglelayer" />
@@ -18,16 +16,15 @@
       <button class="button is-small" @click="changeTileLayer('WorldImagery')">WorldImagery</button>
     </div>
   -->
-  <p>
+    <p>
       <small
         ><i
           >Developed by Kadek Ananta Satriadi, PhD, under the
-          <a href="https://badhi.id" target="_blank">BADHI project</a>.<br/>
+          <a href="https://badhi.id" target="_blank">BADHI project</a>.<br />
           Version May 2024.</i
         ></small
       >
     </p>
-  
   </div>
   <!-- end of information panel -->
   <div id="map"></div>
@@ -159,7 +156,8 @@ export default {
 
     const TemplesPointLayer = {
       type: LAYERTYPE.point,
-      csvurl: "https://gist.githubusercontent.com/KadekSatriadi/6ca371ab0896edfae921e33cdaba87df/raw/7653c8d3696c679d1eca7a1fbb660b28bb403300/Bali_Temples_2021.csv",
+      tokenurl: "https://badhi-data-api.netlify.app/api/token",
+      csvurl: "https://badhi-data-api.netlify.app/api/data",
       name: "Temple Restore data",
       description: "Bali temples data from the Temple Restore project.",
       lat: "Latitude",
@@ -186,7 +184,6 @@ export default {
     const layers = ref([OSMPolygonLayer, TemplesPointLayer]);
 
     let tileLayer;
-
     onMounted(async () => {
       // Initialize the map
       map.value = L.map("map").setView([-8.369663, 115.190955], 10);
@@ -208,13 +205,34 @@ export default {
     const fetchData = async (layer) => {
       // Fetch the CSV data
       let csvData;
-      try {
-        const response = await axios.get(layer.csvurl);
-        csvData = response.data;
-        localStorage.setItem(layer.id, csvData);
-      } catch (error) {
-        console.error("Error fetching the CSV data", error);
+      //get token
+      if (layer.tokenurl) {
+        try {
+          const response = await axios.get(layer.tokenurl);
+          layer.token = response.data.token;
+          try {
+            const response = await axios.get(layer.csvurl, {
+              headers: {
+                Authorization: `Bearer ${layer.token}`,
+              },
+              responseType: "blob",
+            });
+            csvData = response.data;
+          } catch (error) {
+            console.error("Error fetching the CSV data", error);
+          }
+        } catch (error) {
+          console.error("Error fetching token:", error);
+        }
+      } else {
+        try {
+          const response = await axios.get(layer.csvurl);
+          csvData = response.data;
+        } catch (error) {
+          console.error("Error fetching the CSV data", error);
+        }
       }
+
       return csvData;
     };
     const createPopupContent = (row) => {
@@ -304,21 +322,12 @@ export default {
     };
 
     const plotData = (layer) => {
-      //check local
-      let csvDataString = localStorage.getItem(layer.id);
-      //not available, fetch
-      if (!csvDataString) {
-        console.log("data not found in local storage, fetch");
-        (async () => {
-          // Your async code here
-          fetchData(layer).then((data) => {
-            plotString(data, layer);
-          });
-        })();
-      } else {
-        plotString(csvDataString, layer);
-        console.log("load data from local storage, fetch");
-      }
+      (async () => {
+        // Your async code here
+        fetchData(layer).then((data) => {
+          plotString(data, layer);
+        });
+      })();
     };
 
     const togglelayer = (layer) => {
