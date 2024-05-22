@@ -217,6 +217,7 @@ export default {
               },
               responseType: "blob",
             });
+            console.log(response.data);
             csvData = response.data;
           } catch (error) {
             console.error("Error fetching the CSV data", error);
