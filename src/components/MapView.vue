@@ -313,7 +313,7 @@ export default {
           Papa.parse(csvData.data, {
             header: true,
             complete: (res) => {
-              results = res;
+              results = res.data;
             },
           });
           break;
@@ -322,7 +322,7 @@ export default {
           break;
       }
 
-      results.data.forEach((row) => {
+      results.forEach((row) => {
         switch (layer.type) {
           case LAYERTYPE.polygon:
             //if data
