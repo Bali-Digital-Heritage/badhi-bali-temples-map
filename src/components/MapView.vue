@@ -218,7 +218,10 @@ export default {
               responseType: "json",
             });
             console.log(response.data);
-            csvData = response.data;
+            csvData = {
+              type: "json",
+              data: response.data,
+            };
           } catch (error) {
             console.error("Error fetching the CSV data", error);
           }
@@ -228,7 +231,10 @@ export default {
       } else {
         try {
           const response = await axios.get(layer.csvurl);
-          csvData = response.data;
+          csvData = {
+            type: "blob",
+            data: response.data,
+          };
         } catch (error) {
           console.error("Error fetching the CSV data", error);
         }
@@ -296,29 +302,40 @@ export default {
       }
     };
 
-    const plotString = (csvDataString, layer) => {
+    const plotString = (csvData, layer) => {
       // Parse the CSV data
       layer.leaflet = [];
 
-      Papa.parse(csvDataString, {
-        header: true,
-        complete: (results) => {
-          results.data.forEach((row) => {
-            switch (layer.type) {
-              case LAYERTYPE.polygon:
-                //if data
-                if (row[layer.geometry]) {
-                  plotPolygonLayerItem(row, layer);
-                }
-                break;
-              case LAYERTYPE.point:
-                if (row[layer.lat] && row[layer.lon]) {
-                  plotPointLayerItem(row, layer);
-                }
-                break;
-            }
+      let results = [];
+
+      switch (csvData.type) {
+        case "blob":
+          Papa.parse(csvData.data, {
+            header: true,
+            complete: (res) => {
+              results = res;
+            },
           });
-        },
+          break;
+        case "json":
+          results = csvData.data;
+          break;
+      }
+
+      results.data.forEach((row) => {
+        switch (layer.type) {
+          case LAYERTYPE.polygon:
+            //if data
+            if (row[layer.geometry]) {
+              plotPolygonLayerItem(row, layer);
+            }
+            break;
+          case LAYERTYPE.point:
+            if (row[layer.lat] && row[layer.lon]) {
+              plotPointLayerItem(row, layer);
+            }
+            break;
+        }
       });
     };
 
