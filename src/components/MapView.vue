@@ -215,7 +215,7 @@ export default {
               headers: {
                 Authorization: `Bearer ${layer.token}`,
               },
-              responseType: "blob",
+              responseType: "json",
             });
             console.log(response.data);
             csvData = response.data;
