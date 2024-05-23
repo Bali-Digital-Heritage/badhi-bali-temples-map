@@ -31,7 +31,7 @@
 </template>
 
 <style>
-.panel{
+.panel {
   max-width: 500px;
 }
 .popup {
@@ -162,7 +162,8 @@ export default {
       tokenurl: "https://badhi-data-api.netlify.app/api/token",
       csvurl: "https://badhi-data-api.netlify.app/api/data",
       name: "Temple Restore data",
-      description: "Temples Data from the Temple Restore project run by Samatha Sharma, MSc, London School of Economics, B.E(Hons.) BITS Pilani. She can be reached at samatha.express@gmail.com",
+      description:
+        "Temples Data from the Temple Restore project run by Samatha Sharma, MSc, London School of Economics, B.E(Hons.) BITS Pilani. She can be reached at samatha.express@gmail.com",
       lat: "Latitude",
       lon: "Longitude",
       id: "ts2021",
@@ -192,10 +193,25 @@ export default {
       map.value = L.map("map").setView([-8.369663, 115.190955], 10);
 
       // Set up the tile layer
-      tileLayer = L.tileLayer(
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      // tileLayer = L.tileLayer(
+      //   "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      //   {
+      //     attribution: "&copy; OpenStreetMap contributors",
+      //   }
+      // ).addTo(map.value);
+
+      //mapbox
+      L.tileLayer(
+        "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",
         {
-          attribution: "&copy; OpenStreetMap contributors",
+          attribution:
+            '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>',
+          tileSize: 512,
+          maxZoom: 18,
+          zoomOffset: -1,
+          id: "kadekananta/clwjvotpb00t701rd29h44r1q",
+          accessToken:
+            "pk.eyJ1Ijoia2FkZWthbmFudGEiLCJhIjoiY2pmNHk2dG5lMTdjczJ3bXFzZnA3cG9pMyJ9.n0xEbkXvuJ3T-iYvc-x6wg",
         }
       ).addTo(map.value);
 
