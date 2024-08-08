@@ -10,7 +10,7 @@
           
         </button>
       </header>
-      <div class="card-content">
+      <div class="card-content" v-show="layer.isactive">
         <div class="content">
             {{ layer.description }}            
            <div class="legend mt-3" v-html="layer.legend"></div>

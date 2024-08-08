@@ -1,14 +1,21 @@
 <template>
   <!-- information panel -->
-  <div class="corner panel info p-5">
-    <h2 class="title">Bali Temples</h2>
-    <p>Worship places and temples in Bali.</p>
-
-    <hr />
-
-    <LayerList :layers="layers" @togglelayer="togglelayer" />
-    <div class="legend mt-3"></div>
-    <!-- buggy
+  <div class="corner p-5 pt-3">
+    <div class="is-flex is-justify-content-flex-end">
+      <button class="button is-small is-text" @click="hidepanel = !hidepanel">
+        <span class="icon">
+            <i :class="{'fa': true, 'fa-eye': !hidepanel, 'fa-eye-slash': hidepanel}" aria-hidden="true"></i>
+          </span>
+      </button>
+    </div>
+    <div class="mb-6">
+      <p class="title">Bali Temples</p>
+      <p class="subtitle"> Worship places and temples in Bali.</p>
+    </div>
+    <template v-if="!hidepanel">
+      <LayerList :layers="layers" @togglelayer="togglelayer" />
+      <div class="legend mt-3"></div>
+      <!-- buggy
       <div class="buttons">
       <button class="button is-small" @click="changeTileLayer('Standard')">Standard</button>
       <button class="button is-small" @click="changeTileLayer('Hot')">Hot</button>
@@ -16,31 +23,37 @@
       <button class="button is-small" @click="changeTileLayer('WorldImagery')">WorldImagery</button>
     </div>
   -->
-    <p>
-      <small
-        ><i
-          >Developed by Kadek Ananta Satriadi, PhD, under the
+      <p>
+        <small>Developed by Kadek Ananta Satriadi, PhD, under the
           <a href="https://badhi.id" target="_blank">BADHI project</a>.<br />
-          Version May 2024.</i
-        ></small
-      >
-    </p>
+          Version May 2024.</small>
+      </p>
+    </template>
+
   </div>
   <!-- end of information panel -->
   <div id="map"></div>
 </template>
 
 <style>
+#map {
+  width: 100%;
+  height: 500px;
+}
+
 .panel {
   max-width: 500px;
 }
+
 .popup {
   max-height: 200px;
   overflow-y: scroll;
 }
+
 .legend {
   display: flex;
 }
+
 .legend-item {
   display: flex;
   margin-right: 5px;
@@ -54,20 +67,25 @@
   display: block;
   border-radius: 50%;
 }
+
 .legend-label {
   display: block;
   padding-left: 5px;
 }
+
 #map {
   width: 100%;
   height: 100vh !important;
 }
+
 .corner {
   position: absolute !important;
   top: 5%;
   z-index: 1000;
   right: 1%;
+  max-width: 500px;
 }
+
 .info {
   background-color: rgba(255, 255, 255, 0.6) !important;
   border-radius: 5px;
@@ -89,6 +107,7 @@ export default {
   },
   setup() {
     const map = ref(null);
+    const hidepanel = ref(false);
 
     const LAYERTYPE = {
       polygon: "polygon",
@@ -136,7 +155,7 @@ export default {
       type: LAYERTYPE.polygon,
       csvurl:
         "https://raw.githubusercontent.com/KadekSatriadi/OSM-Bali-temples/main/Bali_place_of_worship_all.csv",
-      name: "OSM Worship Places",
+      name: "OSM Worship Places Data",
       description: "Worship places in Bali from Openstreetmap data.",
       geometry: "geometry",
       id: "osmwp",
@@ -161,9 +180,9 @@ export default {
       type: LAYERTYPE.point,
       tokenurl: "https://badhi-data-api.netlify.app/api/token",
       csvurl: "https://badhi-data-api.netlify.app/api/data",
-      name: "Temple Restore data",
+      name: "Temple Restore Data",
       description:
-        "Temples Data from the Temple Restore project run by Samatha Sharma, MSc, London School of Economics, B.E(Hons.) BITS Pilani. She can be reached at samatha.express@gmail.com",
+        "Temples data from the Temple Restore project run by Samatha Sharma, MSc, London School of Economics, B.E(Hons.) BITS Pilani. She can be reached at samatha.express@gmail.com",
       lat: "Latitude",
       lon: "Longitude",
       id: "ts2021",
@@ -430,14 +449,9 @@ export default {
       changeTileLayer,
       layers,
       togglelayer,
+      hidepanel
     };
   },
 };
 </script>
 
-<style scoped>
-#map {
-  width: 100%;
-  height: 500px;
-}
-</style>
