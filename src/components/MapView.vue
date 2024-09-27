@@ -198,13 +198,14 @@ export default {
     onMounted(async () => {
       // Initialize the map
       var southWest = L.latLng(-8.369663, 113.944452);
-      var northEast = L.latLng(-8.369663, 116.114610);
+      var northEast = L.latLng(-8.369663, 116.11461);
       var baliBounds = L.latLngBounds(southWest, northEast);
-      map.value = L.map("map", { minZoom: 10, maxZoom: 18,  maxBounds: baliBounds,
-        maxBoundsViscosity: 1.0,}).setView(
-        [-8.369663, 115.190955],
-        10
-      );
+      map.value = L.map("map", {
+        minZoom: 10,
+        maxZoom: 18,
+        maxBounds: baliBounds,
+        maxBoundsViscosity: 1.0,
+      }).setView([-8.369663, 115.190955], 10);
 
       // Set up the tile layer
       // tileLayer = L.tileLayer(
@@ -214,18 +215,12 @@ export default {
       //   }
       // ).addTo(map.value);
 
-      //mapbox
       L.tileLayer(
-        "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",
+        "https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png",
         {
+          maxZoom: 20,
           attribution:
-            '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>',
-          tileSize: 512,
-          maxZoom: 18,
-          zoomOffset: -1,
-          id: "kadekananta/clwjvotpb00t701rd29h44r1q",
-          accessToken:
-            "pk.eyJ1Ijoia2FkZWthbmFudGEiLCJhIjoiY2pmNHk2dG5lMTdjczJ3bXFzZnA3cG9pMyJ9.n0xEbkXvuJ3T-iYvc-x6wg",
+            '<a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases" title="CyclOSM - Open Bicycle render">CyclOSM</a> | Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         }
       ).addTo(map.value);
 
