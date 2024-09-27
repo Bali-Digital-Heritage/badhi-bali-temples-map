@@ -1,41 +1,29 @@
-<template>
-  <!-- information panel -->
-  <div class="corner p-5 pt-3">
-    <div class="is-flex is-justify-content-flex-end">
-      <button class="button is-small is-text" @click="hidepanel = !hidepanel">
-        <span class="icon">
-            <i :class="{'fa': true, 'fa-eye': !hidepanel, 'fa-eye-slash': hidepanel}" aria-hidden="true"></i>
-          </span>
-      </button>
-    </div>
-    <div class="mb-6">
-      <p class="title">Bali Temples</p>
-      <p class="subtitle"> Worship places and temples in Bali.</p>
-    </div>
-    <template v-if="!hidepanel">
-      <LayerList :layers="layers" @togglelayer="togglelayer" />
-      <div class="legend mt-3"></div>
-      <!-- buggy
-      <div class="buttons">
-      <button class="button is-small" @click="changeTileLayer('Standard')">Standard</button>
-      <button class="button is-small" @click="changeTileLayer('Hot')">Hot</button>
-      <button class="button is-small" @click="changeTileLayer('OpenTopoMap')">OpenTopoMap</button>
-      <button class="button is-small" @click="changeTileLayer('WorldImagery')">WorldImagery</button>
-    </div>
-  -->
-      <p>
-        <small>Developed by Kadek Ananta Satriadi, PhD, under the
-          <a href="https://badhi.id" target="_blank">BADHI project</a>.<br />
-          Version May 2024.</small>
-      </p>
-    </template>
-
-  </div>
-  <!-- end of information panel -->
-  <div id="map"></div>
+<template lang="pug">
+.corner.p-5.pt-3
+  .mb-6
+    p.title Peta Pura Bali
+    p.subtitle  Persebaran pura pura di Pulau Bali.
+  template(v-if="!hidepanel")
+    .legend.mt-3
+#map
+#footer 
+  small
+    | Developed by Kadek Ananta Satriadi, PhD, under the 
+    a(href="https://badhi.id", target="_blank") BADHI project. 
+    | Version September 2024.
+    |
+    br
+    | Temples data from the Temple Restore project run by Samatha Sharma, MSc, London School of Economics, B.E(Hons.) BITS Pilani. She can be reached at samatha.express@gmail.com
 </template>
 
 <style>
+#footer {
+  position: absolute;
+  bottom: 2%;
+  z-index: 1002;
+  text-align: center;
+  width: 100%;
+}
 #map {
   width: 100%;
   height: 500px;
@@ -82,7 +70,7 @@
   position: absolute !important;
   top: 5%;
   z-index: 1000;
-  right: 1%;
+  left: 5%;
   max-width: 500px;
 }
 
@@ -209,7 +197,14 @@ export default {
     let tileLayer;
     onMounted(async () => {
       // Initialize the map
-      map.value = L.map("map").setView([-8.369663, 115.190955], 10);
+      var southWest = L.latLng(-8.369663, 113.944452);
+      var northEast = L.latLng(-8.369663, 116.114610);
+      var baliBounds = L.latLngBounds(southWest, northEast);
+      map.value = L.map("map", { minZoom: 10, maxZoom: 18,  maxBounds: baliBounds,
+        maxBoundsViscosity: 1.0,}).setView(
+        [-8.369663, 115.190955],
+        10
+      );
 
       // Set up the tile layer
       // tileLayer = L.tileLayer(
@@ -449,9 +444,8 @@ export default {
       changeTileLayer,
       layers,
       togglelayer,
-      hidepanel
+      hidepanel,
     };
   },
 };
 </script>
-
