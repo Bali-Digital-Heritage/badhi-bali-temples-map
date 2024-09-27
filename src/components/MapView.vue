@@ -34,7 +34,7 @@
 }
 
 .popup {
-  max-height: 200px;
+  max-height: 600px;
   overflow-y: scroll;
 }
 
@@ -139,31 +139,6 @@ export default {
       }
     };
 
-    const OSMPolygonLayer = {
-      type: LAYERTYPE.polygon,
-      csvurl:
-        "https://raw.githubusercontent.com/KadekSatriadi/OSM-Bali-temples/main/Bali_place_of_worship_all.csv",
-      name: "OSM Worship Places Data",
-      description: "Worship places in Bali from Openstreetmap data.",
-      geometry: "geometry",
-      id: "osmwp",
-      isactive: true,
-      aes: {
-        color: templePolygonColorMap,
-      },
-      style: {
-        fillOpacity: 0.5, // Circle fill opacity
-      },
-      legend: `<div class="legend-item">
-        <div class="legend-icon" style="background-color: ${namedColor}"></div>
-        <div class="legend-label">Named place</div>
-      </div>
-      <div class="legend-item">
-        <div class="legend-icon" style="background-color: ${unnamedColor}"></div>
-        <div class="legend-label">Unnamed place</div>
-      </div>`,
-    };
-
     const TemplesPointLayer = {
       type: LAYERTYPE.point,
       tokenurl: "https://badhi-data-api.netlify.app/api/token",
@@ -192,7 +167,7 @@ export default {
       </div>`,
     };
 
-    const layers = ref([OSMPolygonLayer, TemplesPointLayer]);
+    const layers = ref([TemplesPointLayer]);
 
     let tileLayer;
     onMounted(async () => {
@@ -206,14 +181,6 @@ export default {
         maxBounds: baliBounds,
         maxBoundsViscosity: 1.0,
       }).setView([-8.369663, 115.190955], 10);
-
-      // Set up the tile layer
-      // tileLayer = L.tileLayer(
-      //   "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      //   {
-      //     attribution: "&copy; OpenStreetMap contributors",
-      //   }
-      // ).addTo(map.value);
 
       L.tileLayer(
         "https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png",
@@ -270,7 +237,9 @@ export default {
       return csvData;
     };
     const createPopupContent = (row) => {
-      let table = "<div class='popup'><table>";
+      let table = `<div class='popup'>
+        <h3><b>${row['Temple Name']}</b></h3>
+        <table>`;
       for (const key in row) {
         if (row.hasOwnProperty(key)) {
           table += `<tr><th>${key}</th><td>${row[key]}</td></tr>`;
