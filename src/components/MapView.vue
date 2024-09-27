@@ -177,8 +177,8 @@ export default {
     let tileLayer;
     onMounted(async () => {
       // Initialize the map
-      var southWest = L.latLng(-8.369663, 113.944452);
-      var northEast = L.latLng(-8.369663, 116.11461);
+      var southWest = L.latLng(-9.089964, 114.101455);
+      var northEast = L.latLng(-7.825840, 115.885725);
       var baliBounds = L.latLngBounds(southWest, northEast);
       map.value = L.map("map", {
         minZoom: 10,
