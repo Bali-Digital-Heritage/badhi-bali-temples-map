@@ -38,6 +38,11 @@
   overflow-y: scroll;
 }
 
+.popup h3{
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
 .legend {
   display: flex;
 }
