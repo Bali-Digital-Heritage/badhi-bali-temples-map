@@ -2,18 +2,18 @@
 .corner.p-5.pt-3
   .mb-6
     p.title Peta Pura Bali
-    p.subtitle  Persebaran pura pura di Pulau Bali.
+    p.small  Persebaran pura yang terdata di Pulau Bali (tidak mewakili keseluruhan pura yang ada).
   template(v-if="!hidepanel")
     .legend.mt-3
 #map
 #footer 
   small
-    | Developed by Kadek Ananta Satriadi, PhD, under the 
-    a(href="https://badhi.id", target="_blank") BADHI project. 
-    | Version September 2024.
+    | Developed by the 
+    a(href="https://badhi.id", target="_blank") BADHI project 
+    | team. Version September 2024.
     |
     br
-    | Temples data from the Temple Restore project run by Samatha Sharma, MSc, London School of Economics, B.E(Hons.) BITS Pilani. She can be reached at samatha.express@gmail.com
+    | Data source: temples data from the Temple Restore project run by Samatha Sharma, MSc, London School of Economics, B.E(Hons.) BITS Pilani. She can be reached at samatha.express@gmail.com
 </template>
 
 <style>
